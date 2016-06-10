@@ -1,0 +1,26 @@
+{
+  "name": "skeleton",
+  "version": "0.0.1",
+  "description": "server structure skeleton",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wyushi/skeleton.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wyushi/skeleton/issues"
+  },
+  "homepage": "https://github.com/wyushi/skeleton#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "redis": "^2.6.1"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.9.0"
+  }
+}
