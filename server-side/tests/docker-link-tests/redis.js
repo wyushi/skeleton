@@ -28,9 +28,15 @@ describe('redis test', () => {
     });
 
     it('read test', (done) => {
-      redisClient.get('greeding', (err, reply) => {
-        expect(err).toNotExist();
-        expect(reply).toEqual(greeding);
+      var greedingMsg = new Promise((resolve, reject) => {
+        redisClient.get('greeding', (err, msg) => {
+          if (err) { reject(err); }
+          else resolve(msg);
+        });
+      });
+
+      greedingMsg.then((msg) => {
+        expect(msg).toEqual(greeding);
         done();
       });
     });
