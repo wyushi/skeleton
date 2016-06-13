@@ -1,16 +1,16 @@
 import redis from 'redis';
 import expect from 'expect';
 
-const redisAddr = process.env.REDIS_PORT_6379_TCP_ADDR
-    , redisPort = process.env.REDIS_PORT_6379_TCP_PORT;
+const redisHost = 'redis'
+    , redisPort = 6379;
 
 
 describe('redis test', () => {
 
   it('check docker env', (done) => {
-    expect(redisAddr).toExist();
+    expect(redisHost).toExist();
     expect(redisPort).toExist();
-    console.log('Reids on ' + redisAddr + ':' + redisPort);
+    console.log('Reids on ' + redisHost + ':' + redisPort);
     done();
   });
 
@@ -20,7 +20,7 @@ describe('redis test', () => {
         redisClient;
 
     before((done) => {
-      redisClient = redis.createClient(redisPort, redisAddr);
+      redisClient = redis.createClient(redisPort, redisHost);
       redisClient.on('connect', () => {
         redisClient.set('greeding', greeding);
         done();
