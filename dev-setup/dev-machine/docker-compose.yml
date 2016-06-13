@@ -13,7 +13,15 @@ services:
       - ../..:/src/code
     depends_on:
       - redis
+      - mongo
+      - elastic-search
     command: sleep infinity
   redis:
     image: redis
     container_name: some-redis
+  mongo:
+    image: mongo
+    container_name: some-mongo
+  elastic-search:
+    image: elasticsearch
+    container_name: some-elastic
