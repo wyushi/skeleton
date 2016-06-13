@@ -1,0 +1,4 @@
+docker stop some-api
+docker rm some-api
+docker stop some-redis
+docker rm some-redis

@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api-node-dockerfile
+    container_name: some-api
+    image: api-node
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../..:/src/code
+    depends_on:
+      - redis
+    command: sleep infinity
+  redis:
+    image: redis
+    container_name: some-redis
