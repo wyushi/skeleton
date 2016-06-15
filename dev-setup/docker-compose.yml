@@ -10,12 +10,14 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ../..:/src/code
+      - ..:/src/code
     depends_on:
       - redis
       - mongo
       - elastic-search
     command: sleep infinity
+    environment:
+      - TERM=xterm
   redis:
     image: redis
     container_name: some-redis
