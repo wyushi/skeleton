@@ -12,3 +12,7 @@ node_modules
 
 # Build
 dist
+
+# SSL
+*.pem
+*.cert
