@@ -20,7 +20,7 @@ module.exports = function (gulp, plugins) {
 
   return function () {
     nodemon({
-      script: serverPath + 'dist/all.js',
+      script: serverPath + 'server.js',
       ext: 'js',
       execMap: {
         'js': 'babel-node --presets=es2015'
