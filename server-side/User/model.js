@@ -2,9 +2,11 @@ import mongoose, { Schema } from 'mongoose';
 import { modelize } from '../utils/modelize.js';
 
 const userSchema = new Schema({
-        email: String,
-        password: String,
-        active: Boolean
+        email:    { type: String, required: true, unique: true },
+        password: { type: String, required: true },
+        active:   { type: Boolean, default: false },
+        created:  { type: Date, default: Date.now },
+        updated:  { type: Date, default: Date.now }
       });
 
 userSchema.statics.create = function (data, callback) {
@@ -21,8 +23,7 @@ userSchema.statics.create = function (data, callback) {
 
   var user = new this({
         email: data.email,
-        password: data.password,
-        active: false
+        password: data.password
       });
 
   user.save((error, user) => {
