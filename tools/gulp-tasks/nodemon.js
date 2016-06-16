@@ -8,7 +8,9 @@ module.exports = function (gulp, plugins) {
 
   var serverSideJsFiles = [
     serverPath + '**/*.js',
-    '!' + serverPath + 'node_modules/**/*.js'
+    '!' + serverPath + 'node_modules/**/*.js',
+    '!' + serverPath + 'tests/**/*.js',
+    '!' + serverPath + '**/*.spec.js'
   ];
 
   /** lint:server - check server side JS errors */
@@ -27,7 +29,7 @@ module.exports = function (gulp, plugins) {
       },
       watch: serverPath + '**/*.js',
       legacyWatch: true,
-      ignore: []
+      ignore: [serverPath + 'tests/', serverPath + 'node_modules/']
     })
     .on('change', ['lint:server'])
     .on('restart', function () {

@@ -16,14 +16,14 @@ var gulp          = require('gulp')
 
 paths = {
   server: root + 'server-side/',
-  build:  root + 'server-side/dist',
+  build:  root + 'server-side/dist/',
   tools:  root + 'tools/'
 };
 
 serverSourceFiles = [
   paths.server + '**/*.js',
   '!' + paths.server + 'node_modules/**/*.js',
-  '!' + paths.server + 'tests/'
+  '!' + paths.server + 'tests/**/*.js'
 ];
 
 testSourceFiles = [
@@ -50,13 +50,12 @@ gulp.task('unit-test', () => {
 });
 
 gulp.task('dev', getTask('nodemon'));
-gulp.task('develop', ['dev']);
 
-gulp.task('build', () => {
+gulp.task('compile', () => {
   return gulp.src(serverSourceFiles)
-    .pipe(sourcemaps.init())
-    .pipe(babel())
-    .pipe(concat(generatedFile))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(paths.build));
+             .pipe(sourcemaps.init())
+             .pipe(babel())
+             .pipe(concat(generatedFile))
+             .pipe(sourcemaps.write('.'))
+             .pipe(gulp.dest(paths.build));
 });
