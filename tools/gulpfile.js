@@ -23,7 +23,7 @@ paths = {
 serverSourceFiles = [
   paths.server + '**/*.js',
   '!' + paths.server + 'node_modules/**/*.js',
-  '!' + paths.server + 'tests/**/*.js'
+  '!' + paths.server + '**/tests/**/*.js'
 ];
 
 testSourceFiles = [

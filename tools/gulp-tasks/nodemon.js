@@ -9,7 +9,7 @@ module.exports = function (gulp, plugins) {
   var serverSideJsFiles = [
     serverPath + '**/*.js',
     '!' + serverPath + 'node_modules/**/*.js',
-    '!' + serverPath + 'tests/**/*.js',
+    '!' + serverPath + '**/tests/**/*.js',
     '!' + serverPath + '**/*.spec.js'
   ];
 
@@ -29,7 +29,7 @@ module.exports = function (gulp, plugins) {
       },
       watch: serverPath + '**/*.js',
       legacyWatch: true,
-      ignore: [serverPath + 'tests/', serverPath + 'node_modules/']
+      ignore: ['tests/', 'node_modules/']
     })
     .on('change', ['lint:server'])
     .on('restart', function () {
