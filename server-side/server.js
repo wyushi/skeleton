@@ -6,6 +6,7 @@ import fs from 'fs';
 import http from 'http';
 import https from 'https';
 import mongoose from 'mongoose';
+import * as userApp from './User';
 
 
 const credentials = {
@@ -27,6 +28,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // db connections
 mongoose.connection.on('error', console.error);
 mongoose.connect(`mongodb://${mongo.host}:${mongo.port}/${mongo.name}`);
+
+// api routers
+userApp.router.attachTo(app);
 
 // http.createServer(app).listen(3000);
 https.createServer(credentials, app).listen(3000);
