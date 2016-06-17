@@ -2,25 +2,15 @@ import express from 'express';
 import logger from 'morgan';
 import methodOverride from 'method-override';
 import bodyParser from 'body-parser';
-import fs from 'fs';
 import http from 'http';
 import https from 'https';
 import mongoose from 'mongoose';
 import * as userApp from './User';
 import { handleError as validateErrorHandler } from './utils/validate.js';
+import { host, port, credentials, mongo } from './config.js';
 
 
-const credentials = {
-        key: fs.readFileSync(__dirname + '/ssl/key.pem', 'utf8'),
-        cert: fs.readFileSync(__dirname + '/ssl/cert.pem', 'utf8'),
-        passphrase: '0000'
-      },
-      mongo = {
-        host: 'mongo',
-        port: 27017,
-        name: 'dev'
-      },
-      app = express();
+const app = express();
 
 app.use(logger('combined'));
 app.use(methodOverride());

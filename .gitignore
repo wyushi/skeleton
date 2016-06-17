@@ -16,3 +16,6 @@ dist
 # SSL
 *.pem
 *.cert
+
+# Server Side
+server-side/config.js
