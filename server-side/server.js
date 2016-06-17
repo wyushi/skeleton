@@ -33,5 +33,6 @@ app.use((err, req, res, next) => {
 });
 
 // http.createServer(app).listen(3000);
-https.createServer(credentials, app).listen(3000);
-console.log('Server starts listening on port 3000 ...');
+// console.log(`HTTP server starts listening on port ${chalk.green(port)} ...`);
+https.createServer(credentials, app).listen(port);
+console.log(`HTTPS server starts listening on port ${chalk.green(port)} ...`);
