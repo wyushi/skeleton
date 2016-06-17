@@ -17,8 +17,11 @@
   },
   "homepage": "https://github.com/wyushi/skeleton#readme",
   "dependencies": {
+    "bcrypt": "^0.8.7",
     "body-parser": "^1.15.1",
+    "crypto": "0.0.3",
     "express": "^4.13.4",
+    "lodash": "^4.13.1",
     "method-override": "^2.3.6",
     "mongoose": "^4.5.0",
     "morgan": "^1.7.0",
