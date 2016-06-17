@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import http from 'http';
 import https from 'https';
 import mongoose from 'mongoose';
+import chalk from 'chalk';
 import * as userApp from './User';
 import { handleError as validateErrorHandler } from './utils/validate.js';
 import { host, port, credentials, mongo } from './config.js';
@@ -26,6 +27,10 @@ userApp.router.attachTo(app);
 
 // error handling
 app.use(validateErrorHandler);
+app.use((err, req, res, next) => {
+  console.log(chalk.red('Error: ') + err.type + ', ' + err.message);
+  res.status(500).send(err);
+});
 
 // http.createServer(app).listen(3000);
 https.createServer(credentials, app).listen(3000);
