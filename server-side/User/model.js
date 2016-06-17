@@ -33,4 +33,10 @@ userSchema.statics.create = function (data, callback) {
     });
 };
 
+userSchema.methods.activate = function (callback) {
+  callback = callback || function () {};
+  this.active = true;
+  this.save(callback);
+};
+
 export default modelize('User', userSchema);
