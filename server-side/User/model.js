@@ -3,7 +3,7 @@ import { modelize } from '../utils/modelize.js';
 import * as validate from '../utils/validate.js';
 import { promise as encrypt } from '../utils/encrypt.js';
 
-
+// TODO: use class for schema
 const userSchema = new Schema({
         email:    { type: String, required: true, unique: true },
         password: { type: String, required: true },
@@ -13,7 +13,7 @@ const userSchema = new Schema({
       });
 
 userSchema.statics.create = function (data, callback) {
-
+  // TODO: integrate validate to mongoose schema
   callback = callback || function () {};
   validate.required(data, 'email, password');
   validate.notEmpty(data.email, 'email');
