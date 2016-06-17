@@ -1,6 +1,6 @@
 import expect from 'expect';
-import User from '../../schemas/User.js';
-import { mongoTestSetup as setup } from './mongo.js';
+import User from '../model.js';
+import { mongoTestSetup as setup } from '../../utils/mongo.js';
 
 
 setup();
