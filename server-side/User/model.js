@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import { modelize } from '../utils/modelize.js';
 import * as validate from '../utils/validate.js';
-import encrypt from '../utils/encrypt.js';
+import { promise as encrypt } from '../utils/encrypt.js';
 
 
 const userSchema = new Schema({
@@ -20,14 +20,17 @@ userSchema.statics.create = function (data, callback) {
   validate.email(data.email);
   validate.notEmpty(data.password, 'password');
 
-  encrypt(data.password, (error, password) => {
-    if (error) { return callback(error); }
-    var user = new this({
-      email: data.email,
-      password: password
+  encrypt(data.password, { algorithm: 'bcrypt' })
+    .then((password) => {
+      var user = new this({
+        email: data.email,
+        password: password
+      });
+      user.save(callback);
+    })
+    .catch((error) => {
+      callback(error);
     });
-    user.save(callback);
-  }, { algorithm: 'bcrypt' });
 };
 
 export default modelize('User', userSchema);

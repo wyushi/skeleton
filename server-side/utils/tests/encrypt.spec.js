@@ -1,6 +1,6 @@
 'use strict';
 var expect = require('expect');
-var encrypt = require('../encrypt.js').default;
+var encrypt = require('../encrypt.js').encrypt;
 
 describe('Utils Encrypt Test', function () {
   var plainText = 'some text';

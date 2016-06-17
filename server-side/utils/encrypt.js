@@ -21,4 +21,13 @@ function encrypt(plainText, callback, options) {
   }
 }
 
-export default encrypt;
+function promise(plainText, options) {
+  return new Promise((resolve, reject) => {
+    encrypt(plainText, (error, encrypted) => {
+      if (error) { reject(error); }
+      else { resolve(encrypted); }
+    }, options);
+  });
+}
+
+export { encrypt, promise };
