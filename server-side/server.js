@@ -7,6 +7,7 @@ import http from 'http';
 import https from 'https';
 import mongoose from 'mongoose';
 import * as userApp from './User';
+import { handleError as validateErrorHandler } from './utils/validate.js';
 
 
 const credentials = {
@@ -24,6 +25,7 @@ const credentials = {
 app.use(logger('combined'));
 app.use(methodOverride());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // db connections
 mongoose.connection.on('error', console.error);
@@ -31,6 +33,9 @@ mongoose.connect(`mongodb://${mongo.host}:${mongo.port}/${mongo.name}`);
 
 // api routers
 userApp.router.attachTo(app);
+
+// error handling
+app.use(validateErrorHandler);
 
 // http.createServer(app).listen(3000);
 https.createServer(credentials, app).listen(3000);
