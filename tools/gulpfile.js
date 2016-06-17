@@ -1,12 +1,13 @@
 var gulp          = require('gulp')
-  , sourcemaps    = require("gulp-sourcemaps")
-  , concat        = require("gulp-concat")
+  , sourcemaps    = require('gulp-sourcemaps')
+  , concat        = require('gulp-concat')
   , runSequence   = require('run-sequence')
   , nodemon       = require('gulp-nodemon')
   , plugins       = require('gulp-load-plugins')()
-  , babel         = require("gulp-babel")
+  , babel         = require('gulp-babel')
   , babelRegister = require('babel-core/register')
-  , mocha         = require("gulp-mocha")
+  , mocha         = require('gulp-mocha')
+  , del           = require('del')
 
   , root  = '../'
   , generatedFile = 'all.js'
@@ -59,3 +60,9 @@ gulp.task('compile', () => {
              .pipe(sourcemaps.write('.'))
              .pipe(gulp.dest(paths.build));
 });
+
+gulp.task('clean:dist', (callback) => {
+  del(paths.build, { force: true }, callback);
+});
+
+
