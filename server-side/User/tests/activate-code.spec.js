@@ -1,55 +1,56 @@
 import expect from 'expect';
-import { create, consume } from '../activate-code.js';
+import { ActivateCode as Code } from '../activate-code.js';
 
 describe('User Activate Code Test', () => {
   const id = "abc123456789";
 
   it('create', (done) => {
-    create(id)
-      .then((code) => {
-        expect(code).toExist();
-        done();
-      })
-      .catch((error) => {
-        expect(error).toNotExist();
-        done();
-      });
-  });
-
-  describe('consume', () => {
-    var backup;
-
-    before((done) => {
-      create(id)
-        .then((code) => {
-          backup = code;
-          expect(code).toExist();
-          done();
-        });
-    });
-
-    it('should success', (done) => {
-      consume(id, backup)
+    Code.create(id)
         .then((code) => {
           expect(code).toExist();
+          expect(code.value).toExist();
+          expect(code.value.length).toBe(6);
           done();
         })
         .catch((error) => {
           expect(error).toNotExist();
           done();
         });
+  });
+
+  describe('consume', () => {
+    var backup;
+
+    before((done) => {
+      Code.create(id)
+          .then((code) => {
+            backup = code;
+            done();
+          });
+    });
+
+    it('should success', (done) => {
+      Code.consume(id, backup.value)
+          .then((matched) => {
+            expect(matched).toBe(true);
+            done();
+          })
+          .catch((error) => {
+            expect(error).toNotExist();
+            done();
+          });
     });
 
     it('should fail', (done) => {
-      consume(id, '000000')
-        .then((code) => {
-          expect(code).toNotExist();
-          done();
-        })
-        .catch((error) => {
-          expect(error).toExist();
-          done();
-        });
+      Code.consume(id, '000000')
+          .then((matched) => {
+            expect(matched).toBe(false);
+            done();
+          })
+          .catch((error) => {
+            expect(error).toNotExist();
+            done();
+          });
     });
   });
 });

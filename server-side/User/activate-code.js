@@ -32,4 +32,37 @@ function consume(id, code) {
   });
 }
 
-export { create, consume };
+class ActivateCode {
+
+  constructor(key) {
+    this.value = randomString(codeLength, codeBase);
+    this.created = Date.now();
+  }
+
+  static create(key) {
+    var code = new ActivateCode(key);
+    return new Promise((resolve, reject) => {
+      store.set(key, code, (error, res) => {
+        if (error) { return reject(error); }
+        resolve(code);
+      });
+    });
+  }
+
+  static consume(key, value) {
+    return new Promise((resolve, reject) => {
+      store.get(key, (error, code) => {
+        if (error) { return reject(error); }
+        if (value !== code.value) {
+          return resolve(false);
+        }
+        store.del(key, (error) => {
+          if (error) { return reject(error); }
+          resolve(true);
+        })
+      });
+    });
+  }
+}
+
+export { create, consume, ActivateCode };
