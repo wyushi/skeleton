@@ -7,7 +7,6 @@ import https from 'https';
 import mongoose from 'mongoose';
 import chalk from 'chalk';
 import * as userApp from './user';
-import { handleError as validateErrorHandler } from './utils/validate.js';
 import { host, port, credentials, mongo } from './config.js';
 
 
@@ -26,7 +25,6 @@ mongoose.connect(`mongodb://${mongo.host}:${mongo.port}/${mongo.name}`);
 userApp.router.attachTo(app);
 
 // error handling
-app.use(validateErrorHandler);
 app.use((err, req, res, next) => {
   console.log(chalk.red('Error: ') + err.type + ', ' + err.message);
   res.status(500).send(err);

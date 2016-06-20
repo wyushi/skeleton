@@ -1,25 +1,33 @@
 import mongoose, { Schema } from 'mongoose';
 import { modelize } from '../utils/modelize.js';
-import * as validate from '../utils/validate.js';
+import * as Validator from '../utils/validator.js'
 import { promise as encrypt } from '../utils/encrypt.js';
 
 // TODO: use class for schema
 const userSchema = new Schema({
-        email:    { type: String, required: true, unique: true },
-        password: { type: String, required: true },
+        email: {
+          type: String,
+          validate: [
+            { validator: Validator.notEmpty, msg: 'email can not be empty.'},
+            { validator: Validator.email,    msg: '{VALUE} is invalide.'}
+          ],
+          required: [true, 'email is required'],
+          unique: [true, 'email is already been used']
+        },
+        password: {
+          type: String,
+          validate: [
+            { validator: Validator.notEmpty, msg: 'password can not be empty.'}
+          ],
+          required: [true, 'password is required']
+        },
         active:   { type: Boolean, default: false },
         created:  { type: Date, default: Date.now },
         updated:  { type: Date, default: Date.now }
       });
 
 userSchema.statics.create = function (data, callback) {
-  // TODO: integrate validate to mongoose schema
   callback = callback || function () {};
-  validate.required(data, 'email, password');
-  validate.notEmpty(data.email, 'email');
-  validate.email(data.email);
-  validate.notEmpty(data.password, 'password');
-
   encrypt(data.password, { algorithm: 'bcrypt' })
     .then((password) => {
       var user = new this({
