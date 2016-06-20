@@ -28,25 +28,20 @@ const userSchema = new mongoose.Schema({
 
 class UserModel {
 
-  static create(data, callback) {
-    callback = callback || function () {};
-    encrypt(data.password, { algorithm: 'bcrypt' })
+  static create(data) {
+    return encrypt(data.password, { algorithm: 'bcrypt' })
       .then((password) => {
         var user = new this({
           email: data.email,
           password: password
         });
-        user.save(callback);
-      })
-      .catch((error) => {
-        callback(error);
+        return user.save();
       });
   }
 
-  activate(callback) {
-    callback = callback || function () {};
+  activate() {
     this.active = true;
-    this.save(callback);
+    return this.save();
   }
 }
 

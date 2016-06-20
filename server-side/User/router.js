@@ -10,59 +10,58 @@ const route = '/users',
       gun = mailgun(gunConfig);
 
 function sendActivateCode(user, next) {
-  ActivateCode.create(user._id).then((code) => {
-    gun.messages().send(confirmMail(user, code.value));
-    console.log(chalk.blue('Code ' + code.value + ' send to ' + user.email));
-  }).catch(next);
+  ActivateCode
+    .create(user._id)
+    .then((code) => {
+      gun.messages().send(confirmMail(user, code.value));
+      console.log(chalk.blue('Code ' + code.value + ' send to ' + user.email));
+    }).catch(next);
 }
 
 function attachTo(app) {
 
   app.get(route, (req, res, next) => {
-    User.find().exec((error, users) => {
-      if (error) { return next(error); }
-      res.send(users);
-    });
+    User.find().exec()
+        .then((users) => {
+          res.send(users);
+        }).catch(next);
   });
 
   app.post(route, (req, res, next) => {
-    User.create(req.body, (error, user) => {
-      if (error) { return next(error); }
-      sendActivateCode(user, next);
-      res.send(user);
-    });
+    User.create(req.body)
+        .then((user) => {
+          sendActivateCode(user, next);
+          res.send(user);
+        }).catch(next);
   });
 
   app.get(route + '/:id', (req, res, next) => {
-    User.findOne({ _id: req.params.id })
-        .exec((error, user) => {
-          if (error) { return next(error); }
+    User.findOne({ _id: req.params.id }).exec()
+        .then((user) => {
           res.send(user);
-        });
+        }).catch(next);
   });
 
   app.get(route + '/:id/reactivate',(req, res, next) => {
-    User.findOne({ _id: req.params.id })
-        .exec((error, user) => {
-          if (error) { return next(error); }
+    User.findOne({ _id: req.params.id }).exec()
+        .then((user) => {
           sendActivateCode(user, next);
           res.send(user);
-        });
+        }).catch(next);
   });
 
   app.post(route + '/:id/confirm', (req, res, next) => {
     ActivateCode
       .consume(req.params.id, req.body.code)
       .then((matched) => {
-        if (!matched) { return next(new Error('activate code not match.')); }
-        User.findOne({ _id: req.params.id })
-            .exec((error, user) => {
-              if (error) { return next(error); }
-              user.activate((error, user) => {
-                if (error) { return next(error); }
-                res.send(user);
-              });
-            });
+        if (!matched) { throw new Error('activate code not match.'); }
+        return User.findOne({ _id: req.params.id }).exec();
+      })
+      .then((user) => {
+        return user.activate();
+      })
+      .then((user) => {
+        res.send(user);
       }).catch(next);
   });
 }
