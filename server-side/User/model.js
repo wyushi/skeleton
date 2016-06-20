@@ -1,10 +1,10 @@
-import mongoose, { Schema } from 'mongoose';
-import { modelize } from '../utils/modelize.js';
+import mongoose from 'mongoose';
+import loadClass from 'mongoose-class-wrapper';
 import * as Validator from '../utils/validator.js'
 import { promise as encrypt } from '../utils/encrypt.js';
 
-// TODO: use class for schema
-const userSchema = new Schema({
+
+const userSchema = new mongoose.Schema({
         email: {
           type: String,
           validate: [
@@ -26,25 +26,29 @@ const userSchema = new Schema({
         updated:  { type: Date, default: Date.now }
       });
 
-userSchema.statics.create = function (data, callback) {
-  callback = callback || function () {};
-  encrypt(data.password, { algorithm: 'bcrypt' })
-    .then((password) => {
-      var user = new this({
-        email: data.email,
-        password: password
+class UserModel {
+
+  static create(data, callback) {
+    callback = callback || function () {};
+    encrypt(data.password, { algorithm: 'bcrypt' })
+      .then((password) => {
+        var user = new this({
+          email: data.email,
+          password: password
+        });
+        user.save(callback);
+      })
+      .catch((error) => {
+        callback(error);
       });
-      user.save(callback);
-    })
-    .catch((error) => {
-      callback(error);
-    });
-};
+  }
 
-userSchema.methods.activate = function (callback) {
-  callback = callback || function () {};
-  this.active = true;
-  this.save(callback);
-};
+  activate(callback) {
+    callback = callback || function () {};
+    this.active = true;
+    this.save(callback);
+  }
+}
 
-export default modelize('User', userSchema);
+userSchema.plugin(loadClass, UserModel);
+export default mongoose.model('User', userSchema);

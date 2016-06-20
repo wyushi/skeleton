@@ -1,6 +1,7 @@
-import User from './model.js';
 import mailgun from 'mailgun-js';
+import chalk from 'chalk';
 import { mailgun as gunConfig } from '../config.js';
+import User from './model.js';
 import { confirmMail } from './mail-generator.js';
 import ActivateCode from './activate-code.js';
 
@@ -11,6 +12,7 @@ const route = '/users',
 function sendActivateCode(user, next) {
   ActivateCode.create(user._id).then((code) => {
     gun.messages().send(confirmMail(user, code.value));
+    console.log(chalk.blue('Code ' + code.value + ' send to ' + user.email));
   }).catch(next);
 }
 

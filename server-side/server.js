@@ -26,7 +26,7 @@ userApp.router.attachTo(app);
 
 // error handling
 app.use((err, req, res, next) => {
-  console.log(chalk.red('Error: ') + err.type + ', ' + err.message);
+  console.log(chalk.red('Error: ') + err.message);
   res.status(500).send(err);
 });
 
