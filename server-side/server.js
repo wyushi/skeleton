@@ -6,7 +6,7 @@ import http from 'http';
 import https from 'https';
 import mongoose from 'mongoose';
 import chalk from 'chalk';
-import * as userApp from './User';
+import * as userApp from './user';
 import { handleError as validateErrorHandler } from './utils/validate.js';
 import { host, port, credentials, mongo } from './config.js';
 
