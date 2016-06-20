@@ -11,7 +11,7 @@ const route = '/users',
 
 function sendActivateCode(user, next) {
   ActivateCode
-    .create(user._id)
+    .create(user.id)
     .then((code) => {
       gun.messages().send(confirmMail(user, code.value));
       console.log(chalk.blue('Code ' + code.value + ' send to ' + user.email));

@@ -17,10 +17,9 @@ class ActivateCode {
 
   static create(key) {
     const code = new ActivateCode(key),
-          keyStr = JSON.stringify(key),
           codeStr = JSON.stringify(code);
     return new Promise((resolve, reject) => {
-      store.set(keyStr, codeStr, (error, res) => {
+      store.set(key, codeStr, (error, res) => {
         if (error) { return reject(error); }
         resolve(code);
       });
@@ -29,14 +28,13 @@ class ActivateCode {
 
   static consume(key, value) {
     return new Promise((resolve, reject) => {
-      const keyStr = JSON.stringify(key);
-      store.get(keyStr, (error, codeStr) => {
+      store.get(key, (error, codeStr) => {
         if (error) { return reject(error); }
         const code = JSON.parse(codeStr);
         if (!code || value !== code.value) {
           return resolve(false);
         }
-        store.del(keyStr, (error) => {
+        store.del(key, (error) => {
           if (error) { return reject(error); }
           resolve(true);
         });
