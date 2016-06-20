@@ -45,5 +45,11 @@ class UserModel {
   }
 }
 
+userSchema.set('toJSON', {
+  transform: (doc, ret, options) => {
+    delete ret.password;
+    delete ret.__v;
+  }
+});
 userSchema.plugin(loadClass, UserModel);
 export default mongoose.model('User', userSchema);
