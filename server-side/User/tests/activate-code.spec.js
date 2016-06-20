@@ -11,10 +11,6 @@ describe('User Activate Code Test', () => {
           expect(code.value).toExist();
           expect(code.value.length).toBe(6);
           done();
-        })
-        .catch((error) => {
-          expect(error).toNotExist();
-          done();
         });
   });
 
@@ -34,10 +30,6 @@ describe('User Activate Code Test', () => {
           .then((matched) => {
             expect(matched).toBe(true);
             done();
-          })
-          .catch((error) => {
-            expect(error).toNotExist();
-            done();
           });
     });
 
@@ -45,10 +37,6 @@ describe('User Activate Code Test', () => {
       Code.consume(id, '000000')
           .then((matched) => {
             expect(matched).toBe(false);
-            done();
-          })
-          .catch((error) => {
-            expect(error).toNotExist();
             done();
           });
     });

@@ -7,42 +7,20 @@ const codeLength = 6,
       codeBase = '1234567890',
       store = redis.createClient(config.port, config.host);
 
-function create(id) {
-  const code = randomString(codeLength, codeBase),
-        key = id.toString();
-  return new Promise((resolve, reject) => {
-    store.set(key, code, (error, res) => {
-      if (error) { reject(error); }
-      else { resolve(code); }
-    });
-  });
-}
-
-function consume(id, code) {
-  const key = id.toString();
-  return new Promise((resolve, reject) => {
-    store.get(key, (error, reply) => {
-      if (error) { reject(error); }
-      if (reply !== code) { reject(code); }
-      store.del(id, (error, reply) => {
-        if (error) { reject(error); }
-        resolve(reply);
-      });
-    });
-  });
-}
-
 class ActivateCode {
 
   constructor(key) {
+    this.key = key;
     this.value = randomString(codeLength, codeBase);
     this.created = Date.now();
   }
 
   static create(key) {
-    var code = new ActivateCode(key);
+    const code = new ActivateCode(key),
+          keyStr = JSON.stringify(key),
+          codeStr = JSON.stringify(code);
     return new Promise((resolve, reject) => {
-      store.set(key, code, (error, res) => {
+      store.set(keyStr, codeStr, (error, res) => {
         if (error) { return reject(error); }
         resolve(code);
       });
@@ -51,18 +29,20 @@ class ActivateCode {
 
   static consume(key, value) {
     return new Promise((resolve, reject) => {
-      store.get(key, (error, code) => {
+      const keyStr = JSON.stringify(key);
+      store.get(keyStr, (error, codeStr) => {
         if (error) { return reject(error); }
-        if (value !== code.value) {
+        const code = JSON.parse(codeStr);
+        if (!code || value !== code.value) {
           return resolve(false);
         }
-        store.del(key, (error) => {
+        store.del(keyStr, (error) => {
           if (error) { return reject(error); }
           resolve(true);
-        })
+        });
       });
     });
   }
 }
 
-export { create, consume, ActivateCode };
+export default ActivateCode;

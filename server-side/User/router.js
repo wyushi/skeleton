@@ -2,15 +2,15 @@ import User from './model.js';
 import mailgun from 'mailgun-js';
 import { mailgun as gunConfig } from '../config.js';
 import { confirmMail } from './mail-generator.js';
-import { create as createCode, consume as consumeCode } from './activate-code.js';
+import ActivateCode from './activate-code.js';
 
 
 const route = '/users',
       gun = mailgun(gunConfig);
 
 function sendActivateCode(user, next) {
-  createCode(user._id).then((code) => {
-    gun.messages().send(confirmMail(user, code));
+  ActivateCode.create(user._id).then((code) => {
+    gun.messages().send(confirmMail(user, code.value));
   }).catch(next);
 }
 
@@ -48,9 +48,11 @@ function attachTo(app) {
         });
   });
 
-  app.get(route + '/:id/confirm/:code', (req, res, next) => {
-    consumeCode(req.params.id, req.params.code)
-      .then((code) => {
+  app.post(route + '/:id/confirm', (req, res, next) => {
+    ActivateCode
+      .consume(req.params.id, req.body.code)
+      .then((matched) => {
+        if (!matched) { return next(new Error('activate code not match.')); }
         User.findOne({ _id: req.params.id })
             .exec((error, user) => {
               if (error) { return next(error); }
@@ -59,8 +61,7 @@ function attachTo(app) {
                 res.send(user);
               });
             });
-      })
-      .catch(next);
+      }).catch(next);
   });
 }
 
