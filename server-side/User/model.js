@@ -53,6 +53,14 @@ class UserModel {
     });
   }
 
+  resetPassword(password) {
+    return encryptPassword(password)
+      .then((encrypted) => {
+        user.password = password;
+        return user.save();
+      });
+  }
+
   activate() {
     this.active = true;
     return this.save();
