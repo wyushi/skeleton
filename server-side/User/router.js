@@ -20,6 +20,13 @@ function sendActivateCode(user, next) {
 
 function attachTo(app) {
 
+  const passport = app.passport;
+
+  app.post('/login', passport.authenticate('local'),
+    (req, res, next) => {
+      res.send(req.user);
+    });
+
   app.get(route, (req, res, next) => {
     User.find().exec()
         .then((users) => {

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import loadClass from 'mongoose-class-wrapper';
+import bcrypt from 'bcrypt';
 import * as Validator from '../utils/validator.js'
 import { promise as encrypt } from '../utils/encrypt.js';
 
@@ -28,15 +29,28 @@ const userSchema = new mongoose.Schema({
 
 class UserModel {
 
+  static encryptPassword(password) {
+    return encrypt(password, { algorithm: 'bcrypt' });
+  }
+
   static create(data) {
-    return encrypt(data.password, { algorithm: 'bcrypt' })
-      .then((password) => {
+    return this.encryptPassword(data.password)
+      .then((encrypted) => {
         var user = new this({
           email: data.email,
-          password: password
+          password: encrypted
         });
         return user.save();
       });
+  }
+
+  verifyPassword(password) {
+    return new Promise((resolve, reject) => {
+      bcrypt.compare(password, this.password, (err, matched) => {
+        if (err) { return reject(err); }
+        resolve(matched);
+      })
+    });
   }
 
   activate() {

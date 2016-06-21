@@ -5,24 +5,26 @@ import bodyParser from 'body-parser';
 import http from 'http';
 import https from 'https';
 import mongoose from 'mongoose';
+import passport from 'passport';
 import chalk from 'chalk';
 import * as userApp from './user';
 import { host, port, credentials, mongo } from './config.js';
 
-
 const app = express();
 
-app.use(logger('combined'));
+app.use(logger('dev'));
 app.use(methodOverride());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(passport.initialize());
+app.passport = passport;
 
 // db connections
 mongoose.connection.on('error', console.error);
 mongoose.connect(`mongodb://${mongo.host}:${mongo.port}/${mongo.name}`);
 
 // api routers
-userApp.router.attachTo(app);
+userApp.attachTo(app);
 
 // error handling
 app.use((err, req, res, next) => {
