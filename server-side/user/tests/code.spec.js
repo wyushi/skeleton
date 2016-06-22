@@ -1,11 +1,14 @@
 import expect from 'expect';
-import { ActivateCode as Code } from '../activate-code.js';
+import redis from 'redis';
+import Code from '../code.js';
 
 describe('User Activate Code Test', () => {
-  const id = "abc123456789";
+
+  const id = "abc123456789",
+        store = redis.createClient(6379, 'redis');
 
   it('create', (done) => {
-    Code.create(id)
+    Code.create(store, id)
         .then((code) => {
           expect(code).toExist();
           expect(code.value).toExist();
@@ -18,7 +21,7 @@ describe('User Activate Code Test', () => {
     var backup;
 
     before((done) => {
-      Code.create(id)
+      Code.create(store, id)
           .then((code) => {
             backup = code;
             done();
@@ -26,7 +29,7 @@ describe('User Activate Code Test', () => {
     });
 
     it('should success', (done) => {
-      Code.consume(id, backup.value)
+      Code.consume(store, id, backup.value)
           .then((matched) => {
             expect(matched).toBe(true);
             done();
@@ -34,7 +37,7 @@ describe('User Activate Code Test', () => {
     });
 
     it('should fail', (done) => {
-      Code.consume(id, '000000')
+      Code.consume(store, id, '000000')
           .then((matched) => {
             expect(matched).toBe(false);
             done();

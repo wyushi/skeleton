@@ -11,12 +11,12 @@ describe('User Test', () => {
       password: '0000'
     };
 
-    User.create(data, (error, user) => {
-      expect(error).toNotExist();
-      expect(user).toExist();
-      expect(user.email).toEqual('user@email.com');
-      done();
-    });
+    User.create(data)
+        .then((user) => {
+          expect(user).toExist();
+          expect(user.email).toEqual('user@email.com');
+          done();
+        });
   });
 });
 
