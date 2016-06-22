@@ -1,11 +1,8 @@
-import redis from 'redis';
-import { redis as config } from '../config.js';
 import randomString from '../utils/random-string.js';
 
 
 const codeLength = 6,
-      codeBase = '1234567890',
-      store = redis.createClient(config.port, config.host);
+      codeBase = '1234567890';
 
 class Code {
 
@@ -15,7 +12,7 @@ class Code {
     this.created = Date.now();
   }
 
-  static create(key) {
+  static create(store, key) {
     const code = new Code(key),
           codeStr = JSON.stringify(code);
     return new Promise((resolve, reject) => {
@@ -26,7 +23,7 @@ class Code {
     });
   }
 
-  static consume(key, value) {
+  static consume(store, key, value) {
     return new Promise((resolve, reject) => {
       store.get(key, (error, codeStr) => {
         if (error) { return reject(error); }
