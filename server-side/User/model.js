@@ -29,10 +29,6 @@ const userSchema = new mongoose.Schema({
 
 class UserModel {
 
-  static encryptPassword(password) {
-    return encrypt(password, { algorithm: 'bcrypt' });
-  }
-
   static create(data) {
     return this.encryptPassword(data.password)
       .then((encrypted) => {
@@ -42,6 +38,22 @@ class UserModel {
         });
         return user.save();
       });
+  }
+
+  static encryptPassword(password) {
+    return encrypt(password, { algorithm: 'bcrypt' });
+  }
+
+  static all() {
+    return this.find().exec();
+  }
+
+  static findById(id) {
+    return this.findOne({ _id: id }).exec();
+  }
+
+  static findByEmail(email) {
+    return this.findOne({ email: email }).exec();
   }
 
   verifyPassword(password) {

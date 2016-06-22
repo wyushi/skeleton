@@ -28,7 +28,7 @@ function attachTo(app) {
             .consume(redis, email, code)
             .then((matched) => {
               if (!matched) { throw ERROR.codeNotMatch(code); }
-              return User.findOne({ email: email }).exec();
+              return User.findByEmail(email);
             });
   }
 
@@ -37,7 +37,7 @@ function attachTo(app) {
   });
 
   app.get(route, (req, res, next) => {
-    User.find().exec()
+    User.all()
         .then((users) => {
           res.send(users);
         }).catch(next);
@@ -54,7 +54,7 @@ function attachTo(app) {
   app.get(route + '/:id', (req, res, next) => {
     const id = req.params.id;
 
-    User.findOne({ _id: id }).exec()
+    User.findById(id)
         .then((user) => {
           if (!user) { throw ERROR.notFound(id); }
           res.send(user);
@@ -64,7 +64,7 @@ function attachTo(app) {
   app.post(route + '/request_code', (req, res, next) => {
     const email = req.body.email;
 
-    User.findOne({ email: email }).exec()
+    User.findByEmail(email)
         .then((user) => {
           if (!user) { throw ERROR.notFound(email); }
           sendCode(user, next);
