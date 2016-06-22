@@ -9,6 +9,7 @@ import passport from 'passport';
 import chalk from 'chalk';
 import * as userApp from './user';
 import { host, port, credentials, mongo } from './config.js';
+import onError from './utils/error-handler.js';
 
 const app = express();
 
@@ -27,10 +28,7 @@ mongoose.connect(`mongodb://${mongo.host}:${mongo.port}/${mongo.name}`);
 userApp.attachTo(app);
 
 // error handling
-app.use((err, req, res, next) => {
-  console.error(chalk.red('Error: ') + err.stack);
-  res.status(500).send(err.stack);
-});
+app.use(onError);
 
 // http.createServer(app).listen(3000);
 // console.log(`HTTP server starts listening on port ${chalk.green(port)} ...`);

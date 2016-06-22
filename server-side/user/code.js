@@ -16,7 +16,7 @@ class Code {
   }
 
   static create(key) {
-    const code = new ActivateCode(key),
+    const code = new Code(key),
           codeStr = JSON.stringify(code);
     return new Promise((resolve, reject) => {
       store.set(key, codeStr, (error, res) => {
