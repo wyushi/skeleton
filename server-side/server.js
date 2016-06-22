@@ -6,9 +6,10 @@ import http from 'http';
 import https from 'https';
 import mongoose from 'mongoose';
 import passport from 'passport';
+import mailgun from 'mailgun-js';
 import chalk from 'chalk';
 import * as userApp from './user';
-import { host, port, credentials, mongo } from './config.js';
+import * as config from './config.js';
 import onError from './utils/error-handler.js';
 
 const app = express();
@@ -18,11 +19,13 @@ app.use(methodOverride());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
-app.passport = passport;
+
+app.passport  = passport;
+app.mailgun   = mailgun(config.mailgun);
 
 // db connections
 mongoose.connection.on('error', console.error);
-mongoose.connect(`mongodb://${mongo.host}:${mongo.port}/${mongo.name}`);
+mongoose.connect(`mongodb://${config.mongo.host}:${config.mongo.port}/${config.mongo.name}`);
 
 // api routers
 userApp.attachTo(app);
@@ -30,7 +33,7 @@ userApp.attachTo(app);
 // error handling
 app.use(onError);
 
-// http.createServer(app).listen(3000);
-// console.log(`HTTP server starts listening on port ${chalk.green(port)} ...`);
-https.createServer(credentials, app).listen(port);
-console.log(`HTTPS server starts listening on port ${chalk.green(port)} ...`);
+// http.createServer(app).listen(config.port);
+// console.log(`HTTP server starts listening on port ${chalk.green(config.port)} ...`);
+https.createServer(config.credentials, app).listen(config.port);
+console.log(`HTTPS server starts listening on port ${chalk.green(config.port)} ...`);
