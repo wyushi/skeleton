@@ -54,10 +54,10 @@ class UserModel {
   }
 
   resetPassword(password) {
-    return encryptPassword(password)
+    return UserModel.encryptPassword(password)
       .then((encrypted) => {
-        user.password = password;
-        return user.save();
+        this.password = encrypted;
+        return this.save();
       });
   }
 

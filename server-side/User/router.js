@@ -9,13 +9,22 @@ import ActivateCode from './activate-code.js';
 const route = '/users',
       gun = mailgun(gunConfig);
 
-function sendActivateCode(user, next) {
+function sendCode(user, next) {
   ActivateCode
-    .create(user.id)
+    .create(user.email)
     .then((code) => {
       gun.messages().send(confirmMail(user, code.value));
       console.log(chalk.blue('Code ' + code.value + ' send to ' + user.email));
     }).catch(next);
+}
+
+function findUser(email, code) {
+  return ActivateCode
+      .consume(email, code)
+      .then((matched) => {
+        if (!matched) { throw new Error('activate code not match.'); }
+        return User.findOne({ email: email }).exec();
+      });
 }
 
 function attachTo(app) {
@@ -37,7 +46,7 @@ function attachTo(app) {
   app.post(route, (req, res, next) => {
     User.create(req.body)
         .then((user) => {
-          sendActivateCode(user, next);
+          sendCode(user, next);
           res.send(user);
         }).catch(next);
   });
@@ -49,25 +58,36 @@ function attachTo(app) {
         }).catch(next);
   });
 
-  app.get(route + '/:id/reactivate',(req, res, next) => {
-    User.findOne({ _id: req.params.id }).exec()
+  app.post(route + '/request_code', (req, res, next) => {
+    User.findOne({ email: req.body.email }).exec()
         .then((user) => {
-          sendActivateCode(user, next);
+          if (!user) { throw new Error(`${req.body.email} is not registered.`); }
+          sendCode(user, next);
           res.send(user);
         }).catch(next);
   });
 
-  app.post(route + '/:id/confirm', (req, res, next) => {
-    ActivateCode
-      .consume(req.params.id, req.body.code)
-      .then((matched) => {
-        if (!matched) { throw new Error('activate code not match.'); }
-        return User.findOne({ _id: req.params.id }).exec();
+  app.post(route + '/reset_password', (req, res, next) => {
+    findUser(req.body.email, req.body.code)
+      .then((user) => {
+        if (!user) { throw new Error('user is not defined.'); }
+        return user.resetPassword(req.body.password);
       })
       .then((user) => {
+        if (!user) { throw new Error('user is not defined.'); }
+        res.send(user);
+      })
+      .catch(next);
+  });
+
+  app.post(route + '/activate', (req, res, next) => {
+    findUser(req.body.email, req.body.code)
+      .then((user) => {
+        if (!user) { throw new Error('user is not defined.'); }
         return user.activate();
       })
       .then((user) => {
+        if (!user) { throw new Error('user is not defined.'); }
         res.send(user);
       }).catch(next);
   });
