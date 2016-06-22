@@ -4,6 +4,7 @@ import { mailgun as gunConfig } from '../config.js';
 import User from './model.js';
 import { confirmMail } from './mail-generator.js';
 import ActivateCode from './activate-code.js';
+import { assertExist } from './validate.js';
 
 
 const route = '/users',
@@ -54,6 +55,7 @@ function attachTo(app) {
   app.get(route + '/:id', (req, res, next) => {
     User.findOne({ _id: req.params.id }).exec()
         .then((user) => {
+          assertExist(user, req.params.id, 400);
           res.send(user);
         }).catch(next);
   });
@@ -61,7 +63,7 @@ function attachTo(app) {
   app.post(route + '/request_code', (req, res, next) => {
     User.findOne({ email: req.body.email }).exec()
         .then((user) => {
-          if (!user) { throw new Error(`${req.body.email} is not registered.`); }
+          assertExist(user, req.body.email, 400);
           sendCode(user, next);
           res.send(user);
         }).catch(next);
@@ -70,11 +72,11 @@ function attachTo(app) {
   app.post(route + '/reset_password', (req, res, next) => {
     findUser(req.body.email, req.body.code)
       .then((user) => {
-        if (!user) { throw new Error('user is not defined.'); }
+        assertExist(user);
         return user.resetPassword(req.body.password);
       })
       .then((user) => {
-        if (!user) { throw new Error('user is not defined.'); }
+        assertExist(user);
         res.send(user);
       })
       .catch(next);
@@ -83,11 +85,11 @@ function attachTo(app) {
   app.post(route + '/activate', (req, res, next) => {
     findUser(req.body.email, req.body.code)
       .then((user) => {
-        if (!user) { throw new Error('user is not defined.'); }
+        assertExist(user);
         return user.activate();
       })
       .then((user) => {
-        if (!user) { throw new Error('user is not defined.'); }
+        assertExist(user);
         res.send(user);
       }).catch(next);
   });
