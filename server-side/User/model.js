@@ -80,10 +80,11 @@ class UserModel {
   }
 }
 
-userSchema.set('toJSON', {
+userSchema.set('toObject', {
   transform: (doc, ret, options) => {
+    delete ret._id;
+    ret.id = doc.id;
     delete ret.password;
-    delete ret.__v;
   }
 });
 userSchema.plugin(loadClass, UserModel);
