@@ -60,8 +60,9 @@ class UserModel {
     return new Promise((resolve, reject) => {
       bcrypt.compare(password, this.password, (err, matched) => {
         if (err) { return reject(err); }
+        if (!matched) { return resolve(false); }
         resolve(matched);
-      })
+      });
     });
   }
 

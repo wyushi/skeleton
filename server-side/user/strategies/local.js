@@ -1,4 +1,5 @@
 import { Strategy as LocalStrategy } from 'passport-local';
+import * as ERROR from '../error.js';
 import User from '../model.js';
 
 const localStrategy = new LocalStrategy({
@@ -6,16 +7,15 @@ const localStrategy = new LocalStrategy({
     passwordField: 'password',
     session: false
   },
-  (username, password, done) => {
-    var verified;
-    User.findOne({ email: username }).exec()
+  (email, password, done) => {
+    User.findByEmail(email)
         .then((user) => {
-          if (!user) { done(null, false); }
-          verified = user;
+          if (!user) { throw ERROR.notFound(); }
           return user.verifyPassword(password);
-        })
-        .then((matched) => {
-          matched ? done(null, verified) : done(null, false, { message: 'Invalid password' });
+        }).then((user) => {
+          if (!user) { throw ERROR.passwordNotMatch(); }
+          if (!user.active) { throw ERROR.notActiveted(); }
+          done(null, user);
         }).catch(done);
   });
 
