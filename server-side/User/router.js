@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import HttpStatus from 'http-status-codes';
+import DigitCode from '../utils/code.js';
 import User from './model.js';
-import { confirmMail } from './mail-generator.js';
-import DigitCode from './code.js';
-import ERROR from './error.js';
+import { confirmMail } from './utils/mail.js';
+import ERROR from './utils/error.js';
 
 
 const route = '/users';

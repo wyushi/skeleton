@@ -26,6 +26,7 @@
     "lodash": "^4.13.1",
     "mailgun-js": "^0.7.11",
     "method-override": "^2.3.6",
+    "mongoosastic": "^4.0.2",
     "mongoose": "^4.5.0",
     "mongoose-class-wrapper": "^0.7.0",
     "morgan": "^1.7.0",

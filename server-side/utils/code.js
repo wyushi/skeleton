@@ -1,4 +1,4 @@
-import randomString from '../utils/random-string.js';
+import randomString from './random-string.js';
 
 
 const codeLength = 6,

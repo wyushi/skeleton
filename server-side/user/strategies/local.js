@@ -1,5 +1,5 @@
 import { Strategy as LocalStrategy } from 'passport-local';
-import * as ERROR from '../error.js';
+import * as ERROR from '../utils/error.js';
 import User from '../model.js';
 
 const localStrategy = new LocalStrategy({
