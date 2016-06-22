@@ -21,4 +21,8 @@ export const mailgun = {
   apiKey: '',
   domain: ''
 };
+export const elastic = {
+  host: 'elastic-search:9200',
+  log: 'trace'
+};
 

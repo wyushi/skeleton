@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import http from 'http';
 import https from 'https';
 import redis from 'redis';
+import elasticsearch from 'elasticsearch';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import mailgun from 'mailgun-js';
@@ -12,6 +13,7 @@ import chalk from 'chalk';
 import * as userApp from './user';
 import * as config from './config.js';
 import onError from './utils/error-handler.js';
+
 
 const app = express();
 
@@ -24,6 +26,7 @@ app.use(passport.initialize());
 app.passport  = passport;
 app.mailgun   = mailgun(config.mailgun);
 app.redis     = redis.createClient(config.redis.port, config.redis.host);
+app.elastic   = new elasticsearch.Client(config.elastic);
 
 // db connections
 mongoose.connection.on('error', console.error);
