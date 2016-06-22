@@ -4,7 +4,7 @@ import HttpStatus from 'http-status-codes';
 import { mailgun as gunConfig } from '../config.js';
 import User from './model.js';
 import { confirmMail } from './mail-generator.js';
-import ActivateCode from './activate-code.js';
+import DigitCode from './code.js';
 import ERROR from './error.js';
 
 
@@ -12,7 +12,7 @@ const route = '/users',
       gun = mailgun(gunConfig);
 
 function sendCode(user, next) {
-  ActivateCode
+  DigitCode
     .create(user.email)
     .then((code) => {
       gun.messages().send(confirmMail(user, code.value));
@@ -20,23 +20,23 @@ function sendCode(user, next) {
     }).catch(next);
 }
 
-function findUser(email, code) {
-  return ActivateCode
-      .consume(email, code)
-      .then((matched) => {
-        if (!matched) { throw ERROR.codeNotMatch(code); }
-        return User.findOne({ email: email }).exec();
-      });
+function checkCode(email, code) {
+  return DigitCode
+          .consume(email, code)
+          .then((matched) => {
+            if (!matched) { throw ERROR.codeNotMatch(code); }
+            return User.findOne({ email: email }).exec();
+          });
 }
 
 function attachTo(app) {
 
-  const passport = app.passport;
+  const passport = app.passport,
+        auth = passport.authenticate('local');
 
-  app.post('/login', passport.authenticate('local'),
-    (req, res, next) => {
-      res.send(req.user);
-    });
+  app.post('/login', auth, (req, res, next) => {
+    res.send(req.user);
+  });
 
   app.get(route, (req, res, next) => {
     User.find().exec()
@@ -54,41 +54,49 @@ function attachTo(app) {
   });
 
   app.get(route + '/:id', (req, res, next) => {
-    User.findOne({ _id: req.params.id }).exec()
+    const id = req.params.id;
+
+    User.findOne({ _id: id }).exec()
         .then((user) => {
-          if (!user) { throw ERROR.notFound('placeholder'); }
+          if (!user) { throw ERROR.notFound(id); }
           res.send(user);
         }).catch(next);
   });
 
   app.post(route + '/request_code', (req, res, next) => {
-    User.findOne({ email: req.body.email }).exec()
+    const email = req.body.email;
+
+    User.findOne({ email: email }).exec()
         .then((user) => {
-          if (!user) { throw ERROR.notFound('placeholder'); }
+          if (!user) { throw ERROR.notFound(email); }
           sendCode(user, next);
           res.send(user);
         }).catch(next);
   });
 
   app.post(route + '/reset_password', (req, res, next) => {
-    findUser(req.body.email, req.body.code)
+    const email = req.body.email,
+          code = req.body.code,
+          password = req.body.password;
+
+    checkCode(email, code)
       .then((user) => {
-        if (!user) { throw ERROR.notFound('placeholder'); }
-        return user.resetPassword(req.body.password);
-      })
-      .then((user) => {
+        if (!user) { throw ERROR.notFound(email); }
+        return user.resetPassword(password);
+      }).then((user) => {
         res.send(user);
-      })
-      .catch(next);
+      }).catch(next);
   });
 
   app.post(route + '/activate', (req, res, next) => {
-    findUser(req.body.email, req.body.code)
+    const email = req.body.email,
+          code = req.body.code;
+
+    checkCode(email, code)
       .then((user) => {
-        if (!user) { throw ERROR.notFound('placeholder'); }
+        if (!user) { throw ERROR.notFound(email); }
         return user.activate();
-      })
-      .then((user) => {
+      }).then((user) => {
         res.send(user);
       }).catch(next);
   });

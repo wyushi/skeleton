@@ -7,7 +7,7 @@ const codeLength = 6,
       codeBase = '1234567890',
       store = redis.createClient(config.port, config.host);
 
-class ActivateCode {
+class Code {
 
   constructor(key) {
     this.key = key;
@@ -43,4 +43,4 @@ class ActivateCode {
   }
 }
 
-export default ActivateCode;
+export default Code;
