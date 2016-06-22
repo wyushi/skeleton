@@ -3,6 +3,12 @@ import * as router from './router';
 import localStrategry from './strategies/local.js';
 
 function attachTo(app) {
+  setupPassport(app);
+  const User = model.init();
+  router.attachTo(User, app);
+}
+
+function setupPassport(app) {
   if (!app.passport) {
     throw new Error('passport is not in use.');
   }
@@ -14,7 +20,6 @@ function attachTo(app) {
   app.passport.deserializeUser((user, done) => {
     done(null, user);
   });
-  router.attachTo(app);
 }
 
 export { attachTo };

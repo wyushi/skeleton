@@ -27,6 +27,8 @@ const userSchema = new mongoose.Schema({
         updated:  { type: Date, default: Date.now }
       });
 
+var context = {};
+
 class UserModel {
 
   static create(data) {
@@ -80,12 +82,17 @@ class UserModel {
   }
 }
 
-userSchema.set('toObject', {
-  transform: (doc, ret, options) => {
-    delete ret._id;
-    ret.id = doc.id;
-    delete ret.password;
-  }
-});
-userSchema.plugin(loadClass, UserModel);
-export default mongoose.model('User', userSchema);
+function init(app) {
+  context = app;
+  userSchema.set('toObject', {
+    transform: (doc, ret, options) => {
+      delete ret._id;
+      ret.id = doc.id;
+      delete ret.password;
+    }
+  });
+  userSchema.plugin(loadClass, UserModel);
+  return mongoose.model('User', userSchema);
+}
+
+export { init };
