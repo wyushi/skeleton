@@ -98,21 +98,6 @@ function attachTo(app) {
         res.send(user);
       }).catch(next);
   });
-
-  app.get('/elastic', (req, res, next) => {
-    app.elastic.ping({
-      requestTimeout: 30000,
-      hello: "elasticsearch"
-    }, function (error) {
-      if (error) {
-        console.error('elasticsearch cluster is down!');
-        res.status(500).send(error.track);
-      } else {
-        console.log('All is well');
-        res.status(200).send('All is well');
-      }
-    });
-  });
 }
 
 export { attachTo };
