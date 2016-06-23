@@ -19,7 +19,7 @@ app.use(methodOverride());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
-app.passport  = passport;
+app.passport = passport;
 
 // db connections
 mongooseSetup();

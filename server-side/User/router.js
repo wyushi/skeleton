@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import HttpStatus from 'http-status-codes';
 import DigitCode from '../utils/code.js';
-import elasticSearch from '../services/elastic-search.js';
 import redis from '../services/redis.js';
 import mailgun from '../services/mailgun.js';
 import User from './model.js';
@@ -39,7 +38,7 @@ function attachTo(app) {
   });
 
   app.get(route, (req, res, next) => {
-    User.all()
+    User.eAll()
         .then((users) => {
           res.send(users);
         }).catch(next);

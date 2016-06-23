@@ -46,6 +46,15 @@ class UserModel {
     return encrypt(password, { algorithm: 'bcrypt' });
   }
 
+  static psearch(query) {
+    return new Promise((resolve, reject) => {
+      this.search(query, (err, result) => {
+        if (err) { return reject(err); }
+        resolve(result);
+      });
+    });
+  }
+
   static all() {
     return this.find().exec();
   }
@@ -56,6 +65,30 @@ class UserModel {
 
   static findByEmail(email) {
     return this.findOne({ email: email }).exec();
+  }
+
+  static eAll() {
+    return this.psearch(null)
+  }
+
+  static eFindByEmail(email) {
+    const query = {
+      "match_phrase": { email: email }
+    };
+    return this.psearch(query);
+  }
+
+  static eFindById(id) {
+    return new Promise((resolve, reject) => {
+      elasticSearch.get({
+        index: 'users',
+        type: 'user',
+        id: id
+      }, (err, result) => {
+        if (err) { return reject(err); }
+        resolve(result._source);
+      });
+    });
   }
 
   verifyPassword(password) {

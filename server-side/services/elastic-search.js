@@ -8,13 +8,13 @@ if (!config.elastic) {
 
 const client = new elasticsearch.Client(config.elastic);
 
-client.ping({ hello: "elasticsearch!" }, (error) => {
-  if (error) {
-    console.error(chalk.red('Elastic: ') + err.stack);
-  } else {
-    console.log(chalk.red('Elastic: ') + chalk.green('ready'));
-  }
-});
+// client.ping({ hello: "elasticsearch!" }, (error) => {
+//   if (error) {
+//     console.error(chalk.red('Elastic: ') + chalk.green('---'));
+//   } else {
+//     console.log(chalk.red('Elastic: ') + chalk.green('ready'));
+//   }
+// });
 
 var firstLoad = true;
 
