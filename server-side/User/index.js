@@ -2,7 +2,7 @@ import * as model from './model';
 import * as router from './router';
 import localStrategry from './strategies/local.js';
 
-function attachTo(app) {
+function api(app) {
   setupPassport(app);
   router.attachTo(app);
 }
@@ -21,4 +21,4 @@ function setupPassport(app) {
   });
 }
 
-export { attachTo };
+export { api, model };

@@ -1,19 +1,20 @@
 import chalk from 'chalk';
 import HttpStatus from 'http-status-codes';
 import DigitCode from '../utils/code.js';
+import elasticSearch from '../services/elastic-search.js';
+import redis from '../services/redis.js';
+import mailgun from '../services/mailgun.js';
 import User from './model.js';
 import { confirmMail } from './utils/mail.js';
 import ERROR from './utils/error.js';
-import elasticSearch from '../utils/elastic-search.js';
+
 
 
 const route = '/users';
 
 function attachTo(app) {
 
-  const redis     = app.redis,
-        mailgun   = app.mailgun,
-        auth      = app.passport.authenticate('local');
+  const auth = app.passport.authenticate('local');
 
   function sendCode(user, next) {
     DigitCode

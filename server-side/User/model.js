@@ -4,7 +4,7 @@ import mongoosastic from 'mongoosastic';
 import bcrypt from 'bcrypt';
 import * as Validator from '../utils/validator.js'
 import { promise as encrypt } from '../utils/encrypt.js';
-import elasticSearch from '../utils/elastic-search.js';
+import elasticSearch from '../services/elastic-search.js';
 
 
 const userSchema = new mongoose.Schema({
