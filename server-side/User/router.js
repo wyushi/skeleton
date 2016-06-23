@@ -1,16 +1,17 @@
 import chalk from 'chalk';
 import HttpStatus from 'http-status-codes';
 import DigitCode from '../utils/code.js';
+import User from './model.js';
 import { confirmMail } from './utils/mail.js';
 import ERROR from './utils/error.js';
+import elasticSearch from '../utils/elastic-search.js';
 
 
 const route = '/users';
 
-function attachTo(model, app) {
+function attachTo(app) {
 
-  const User      = model,
-        redis     = app.redis,
+  const redis     = app.redis,
         mailgun   = app.mailgun,
         auth      = app.passport.authenticate('local');
 

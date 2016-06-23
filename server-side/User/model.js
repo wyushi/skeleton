@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
 import loadClass from 'mongoose-class-wrapper';
+import mongoosastic from 'mongoosastic';
 import bcrypt from 'bcrypt';
 import * as Validator from '../utils/validator.js'
 import { promise as encrypt } from '../utils/encrypt.js';
+import elasticSearch from '../utils/elastic-search.js';
 
 
 const userSchema = new mongoose.Schema({
@@ -26,8 +28,6 @@ const userSchema = new mongoose.Schema({
         created:  { type: Date, default: Date.now },
         updated:  { type: Date, default: Date.now }
       });
-
-var context = {};
 
 class UserModel {
 
@@ -82,17 +82,18 @@ class UserModel {
   }
 }
 
-function init(app) {
-  context = app;
-  userSchema.set('toObject', {
-    transform: (doc, ret, options) => {
-      delete ret._id;
-      ret.id = doc.id;
-      delete ret.password;
-    }
-  });
-  userSchema.plugin(loadClass, UserModel);
-  return mongoose.model('User', userSchema);
-}
+userSchema.set('toObject', {
+  transform: (doc, ret, options) => {
+    delete ret._id;
+    ret.id = doc.id;
+    delete ret.password;
+  }
+});
+userSchema.plugin(loadClass, UserModel);
+userSchema.plugin(mongoosastic, {
+  esClient: elasticSearch,
+  index: 'users',
+  type: 'user'
+});
 
-export { init };
+export default mongoose.model('User', userSchema);

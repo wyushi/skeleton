@@ -4,8 +4,7 @@ import localStrategry from './strategies/local.js';
 
 function attachTo(app) {
   setupPassport(app);
-  const User = model.init();
-  router.attachTo(User, app);
+  router.attachTo(app);
 }
 
 function setupPassport(app) {
