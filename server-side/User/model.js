@@ -10,12 +10,15 @@ import elasticSearch from '../services/elastic-search.js';
 const userSchema = new mongoose.Schema({
         email: {
           type: String,
+          es_fields: {
+            raw: { type: 'string', index: 'not_analyzed' }
+          },
           validate: [
             { validator: Validator.notEmpty, msg: 'email can not be empty.'},
             { validator: Validator.email,    msg: '{VALUE} is invalide.'}
           ],
           required: [true, 'email is required'],
-          unique: [true, 'email is already been used']
+          unique: [true, 'email is already been used'],
         },
         password: {
           type: String,
@@ -37,7 +40,7 @@ class UserModel {
         var user = new this({
           email: data.email,
           password: encrypted
-        });
+      });
         return user.save();
       });
   }
@@ -134,4 +137,6 @@ userSchema.plugin(mongoosastic, {
   }
 });
 
-export default mongoose.model('User', userSchema);
+var user = mongoose.model('User', userSchema);
+user.createMapping();
+export default user;
