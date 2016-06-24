@@ -46,15 +46,6 @@ class UserModel {
     return encrypt(password, { algorithm: 'bcrypt' });
   }
 
-  static psearch(query) {
-    return new Promise((resolve, reject) => {
-      this.search(query, (err, result) => {
-        if (err) { return reject(err); }
-        resolve(result);
-      });
-    });
-  }
-
   static all() {
     return this.find().exec();
   }
@@ -65,6 +56,15 @@ class UserModel {
 
   static findByEmail(email) {
     return this.findOne({ email: email }).exec();
+  }
+
+  static psearch(query) {
+    return new Promise((resolve, reject) => {
+      this.search(query, (err, result) => {
+        if (err) { return reject(err); }
+        resolve(result);
+      });
+    });
   }
 
   static eAll() {
@@ -115,7 +115,7 @@ class UserModel {
   }
 }
 
-userSchema.set('toObject', {
+userSchema.set('toJSON', {
   transform: (doc, ret, options) => {
     delete ret._id;
     ret.id = doc.id;
@@ -126,7 +126,12 @@ userSchema.plugin(loadClass, UserModel);
 userSchema.plugin(mongoosastic, {
   esClient: elasticSearch,
   index: 'users',
-  type: 'user'
+  type: 'user',
+  transform: (data, user) => {
+    delete data.password;
+    data.id = user.id;
+    return data;
+  }
 });
 
 export default mongoose.model('User', userSchema);

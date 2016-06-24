@@ -8,7 +8,6 @@ import { confirmMail } from './utils/mail.js';
 import ERROR from './utils/error.js';
 
 
-
 const route = '/users';
 
 function attachTo(app) {
@@ -56,6 +55,16 @@ function attachTo(app) {
     const id = req.params.id;
 
     User.findById(id)
+        .then((user) => {
+          if (!user) { throw ERROR.notFound(id); }
+          res.send(user);
+        }).catch(next);
+  });
+
+  app.get(route + '/email/:email', (req, res, next) => {
+    const email = req.params.email;
+
+    User.eFindByEmail(email)
         .then((user) => {
           if (!user) { throw ERROR.notFound(id); }
           res.send(user);
